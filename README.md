@@ -11,7 +11,7 @@ Because i need it.
 ## init
 
 ```javascript
-const hellMenu = new hellMenuClass();
+const hellMenu = new hellMenuClass(document.getElementById('menu_holder'));
 
 ```
 
