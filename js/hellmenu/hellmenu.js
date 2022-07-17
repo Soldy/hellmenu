@@ -2,29 +2,57 @@
 
 const hellMenuClass = function(main_element_){
     this.setSection = function(id,title){
-        _list_sections[id] = title;
-
+        return _setSection(id,title);
     };
     this.setMenu = function(id, title, action, icon_class,  section, subs){
         _list_menu[id] = {
              id,
              title,
+             action,
              icon_class,
-             subs,
-             section
+             section,
+             childs:{}
         };
+        if(typeof section !== 'string')
+            section =i 'main';
+        if(typeof subs !== 'undefined')
+            _list_menu[id].subs;
+        const _menuAddToSection(id,section){
     };
     this.render = function(){
         _render();
     }
     const _e = main_element_;
-    const _menu_section   = document.createElement('section');
-    const _list_menu_points = [];
-    const _list_sections = {};
+    const _menu  = document.createElement('div');
+    const _list_menu_points = {};
+    const _list_sections = {}; 
+    const _setSection = function(id,title){
+        if(typeof _list_sections === 'undefined')
+            _list_sections[id] = {
+                 menus:[]
+            };
+        if(typeof title === 'string')
+           _list_sections[id].title = title;
+    };
     const _class = (name)=>{
         return ('hellmenu_'+name);
     };
-    const _menuPoint = function(id, title_text, action, icon_class){
+    const _section = function(section){
+        let out  = document.createElement('section');
+        for(let i in _list_sections[section].menus)
+           out.appendChild(
+                _menuPoint(
+                    _list_menu_points[i].id,
+                    _list_menu_points[i].title,
+                    _list_menu_points[i].action,
+                    _list_menu_points[i].icon_class,
+                    _list_menu_points[i].subs
+                )
+            );
+            return out;
+
+    }
+    const _menuPoint = function(id, title_text, action, icon_class, subs){
         if(typeof icon_class === 'undefined')
             icon_class = '';
         const menu = document.createElement('div');
@@ -33,13 +61,13 @@ const hellMenuClass = function(main_element_){
         icon.className  = _class('menuitem_icon '+icon_class);
         title.className = _class('text');
         title.appendChild(
-            document.createTextNode(title)
+            document.createTextNode(title_text)
         );
         menu.appendChild(
             icon
         );
         menu.appendChild(
-            title_text
+            title
         );
         menu.setAttribute('id', id);
         icon.addEventListener(
@@ -52,6 +80,10 @@ const hellMenuClass = function(main_element_){
             action,
             false
         );
+        for(let i of subs)
+            menu.appendChild(
+                _subPoint(i.id, i.icon_class, i.action)
+            );
         return menu;
     };
     const _subPoint=function(id,icon_class,action){
@@ -81,13 +113,33 @@ const hellMenuClass = function(main_element_){
         el.innerHtml='';
         el.className = ('menuitem_icon '+icon)
     };
+    const _menuRemoveFormSection = (menu){
+        if(typeof _list_menus[menu].section !== 'string')
+            return ;
+        const section = _list_menus[menu].section;
+        const index = _list_sections[
+            section
+        ].menus.indexOf(menu);
+        if(indexOf === -1 )
+            return ;
+        _list_sections[
+            section
+        ].menus.splice(index, 1);
+    };
+    const _menuAddToSection(menu,section){
+        _setSection(section);
+        _menuRemoveFormSection(menu);
+        _list_sections[section].menus.push(menu);
+        _list_menus[menu].section = section;
+    };
     const _render = function(){
         _e.innerHtml = '';
+        for(let i in _list_sections)
+            _e.appendChild(
+                _section(i)
+            )
+
     };
     // constructor
-    _menu_section.className = 'section';
-    _menu_section.setAttribute('id', 'menu_section');
-    _script_section.className = 'section';
-    _script_section.setAttribute('id', 'script_section');
 }
 
