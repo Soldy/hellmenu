@@ -5,7 +5,7 @@ const hellMenuClass = function(main_element_){
         return _setSection(id,title);
     };
     this.setMenu = function(id, title, action, icon_class,  section, subs){
-        _list_menu[id] = {
+        _list_menus[id] = {
              id,
              title,
              action,
@@ -14,10 +14,10 @@ const hellMenuClass = function(main_element_){
              childs:{}
         };
         if(typeof section !== 'string')
-            section =i 'main';
+            section = 'main';
         if(typeof subs !== 'undefined')
-            _list_menu[id].subs;
-        const _menuAddToSection(id,section){
+            _list_menus[id].subs;
+        _menuAddToSection(id,section)
     };
     this.render = function(){
         _render();
@@ -25,9 +25,10 @@ const hellMenuClass = function(main_element_){
     const _e = main_element_;
     const _menu  = document.createElement('div');
     const _list_menu_points = {};
+    const _list_menus = {};
     const _list_sections = {}; 
     const _setSection = function(id,title){
-        if(typeof _list_sections === 'undefined')
+        if(typeof _list_sections[id] === 'undefined')
             _list_sections[id] = {
                  menus:[]
             };
@@ -39,14 +40,14 @@ const hellMenuClass = function(main_element_){
     };
     const _section = function(section){
         let out  = document.createElement('section');
-        for(let i in _list_sections[section].menus)
+        for(let i of _list_sections[section].menus)
            out.appendChild(
                 _menuPoint(
-                    _list_menu_points[i].id,
-                    _list_menu_points[i].title,
-                    _list_menu_points[i].action,
-                    _list_menu_points[i].icon_class,
-                    _list_menu_points[i].subs
+                    _list_menus[i].id,
+                    _list_menus[i].title,
+                    _list_menus[i].action,
+                    _list_menus[i].icon_class,
+                    _list_menus[i].subs
                 )
             );
             return out;
@@ -58,6 +59,7 @@ const hellMenuClass = function(main_element_){
         const menu = document.createElement('div');
         const icon = document.createElement('span');
         const title = document.createElement('span');
+        menu.className = _class('line');
         icon.className  = _class('menuitem_icon '+icon_class);
         title.className = _class('text');
         title.appendChild(
@@ -80,10 +82,11 @@ const hellMenuClass = function(main_element_){
             action,
             false
         );
-        for(let i of subs)
-            menu.appendChild(
-                _subPoint(i.id, i.icon_class, i.action)
-            );
+        if(Array.isArray(subs))
+            for(let i of subs)
+                menu.appendChild(
+                    _subPoint(i.id, i.icon_class, i.action)
+                );
         return menu;
     };
     const _subPoint=function(id,icon_class,action){
@@ -113,7 +116,7 @@ const hellMenuClass = function(main_element_){
         el.innerHtml='';
         el.className = ('menuitem_icon '+icon)
     };
-    const _menuRemoveFormSection = (menu){
+    const _menuRemoveFormSection = function(menu){
         if(typeof _list_menus[menu].section !== 'string')
             return ;
         const section = _list_menus[menu].section;
@@ -126,7 +129,7 @@ const hellMenuClass = function(main_element_){
             section
         ].menus.splice(index, 1);
     };
-    const _menuAddToSection(menu,section){
+    const _menuAddToSection = function (menu,section){
         _setSection(section);
         _menuRemoveFormSection(menu);
         _list_sections[section].menus.push(menu);
@@ -142,4 +145,5 @@ const hellMenuClass = function(main_element_){
     };
     // constructor
 }
+
 
