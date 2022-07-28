@@ -5,7 +5,6 @@ window.onload=function(){
         'Test menu 1',
         ()=>{alert('test 1 action')},
         'test_icon_1',
-        [],
         'main'
     );
     hellMenu.setMenu(
@@ -13,8 +12,14 @@ window.onload=function(){
         'Test menu 2',
         ()=>{alert('test 2 action')},
         'test_icon_2',
-        [],
         'main'
+    );
+    hellMenu.setMenu(
+        'test3',
+        'Test menu 3',
+        ()=>{alert('test 2 action')},
+        'test_icon_2',
+        'other'
     );
     hellMenu.render();
 }

@@ -1,0 +1,17 @@
+@font-face {
+    font-family: awesome;
+    src: url(fa-solid-900.ttf);
+    font-weight: bold;
+}
+.test_icon_1,
+.test_icon_2{
+    font-family:awesome;
+}
+.test_icon_1::after {
+    font-family:awesome;
+    content: "\f085";
+}
+.test_icon_2::after {
+    content: "\f004";
+}
+

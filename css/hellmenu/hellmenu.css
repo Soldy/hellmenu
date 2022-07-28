@@ -1,11 +1,22 @@
 .hellmenu_line{
-     height:20px;
-     cursor:pointer;
+    height:20px;
+    cursor:pointer;
+}
+.hellmenu_text,  
+.hellmenu_menuitem_icon{
+    height: 100%;
+    float:left;
+    display:block;
+    margin-left:8px;
 }
 .hellmenu_text{
     font-weight:bold;
-    margin-left:30px;
 }
 .hellmenu_menuitem_icon{
-    width:30px;
+    width:10px;
+}
+.hellmenu_section{
+    border-top:solid #ccc 1px;
+    margin-top:4px;
+    padding-top:4px;
 }
