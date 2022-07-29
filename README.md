@@ -23,7 +23,6 @@ const hellMenu = new hellMenuClass(document.getElementById('menu_holder'));
         'Test menu 1',
         (){alert('test action'),
         'test_icon_1',
-        [],
         'main section'
     );
 
