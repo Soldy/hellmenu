@@ -1,10 +1,27 @@
 'use strict';
 
-const hellMenuClass = function(main_element_){
-    this.setSection = function(id,title){
-        return _setSection(id,title);
+const hellMenuClass = function(main_element_, menus_){
+    this.addSection = function(id,title){
+        _setSection(id,title);
     };
-    this.setMenu = function(id, title, action, icon_class,  section, subs){
+    this.add = function(id, title, action, icon_class,  section, subs){
+        _add(id, title, action, icon_class,  section, subs);
+    };
+    this.render = function(){
+        _render();
+    }
+    this.hide = function(){
+        _menu.className = _class('hide');
+    }
+    this.show = function(){
+        _menu.className = _class('shell');
+    }
+    const _e = main_element_;
+    const _menu  = document.createElement('div');
+    const _list_menu_points = {};
+    const _list_menus = {};
+    const _list_sections = {}; 
+    const _add = function(id, title, action, icon_class,  section, subs){
         _list_menus[id] = {
              id,
              title,
@@ -19,15 +36,7 @@ const hellMenuClass = function(main_element_){
             _list_menus[id].subs;
         _menuAddToSection(id,section)
     };
-    this.render = function(){
-        _render();
-    }
-    const _e = main_element_;
-    const _menu  = document.createElement('div');
-    const _list_menu_points = {};
-    const _list_menus = {};
-    const _list_sections = {}; 
-    const _setSection = function(id,title){
+    const _addSection = function(id,title){
         if(typeof _list_sections[id] === 'undefined')
             _list_sections[id] = {
                  menus:[]
@@ -135,20 +144,20 @@ const hellMenuClass = function(main_element_){
         ].menus.splice(index, 1);
     };
     const _menuAddToSection = function (menu,section){
-        _setSection(section);
+        _addSection(section);
         _menuRemoveFormSection(menu);
         _list_sections[section].menus.push(menu);
         _list_menus[menu].section = section;
     };
     const _render = function(){
-        _e.innerHtml = '';
+        _menu.innerHTML = '';
         for(let i in _list_sections)
-            _e.appendChild(
+            _menu.appendChild(
                 _section(i)
             )
-
     };
     // constructor
+    _e.appendChild(_menu)
 }
 
 
