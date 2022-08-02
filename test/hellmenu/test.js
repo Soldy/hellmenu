@@ -17,9 +17,16 @@ window.onload=function(){
     hellMenu.add(
         'test3',
         'Test menu 3',
-        ()=>{alert('test 2 action')},
+        ()=>{alert('test 3 action')},
         'test_icon_2',
         'other'
+    );
+    hellMenu.addSub(
+        'test4',
+        'Test menu 4',
+        ()=>{alert('test 4 action')},
+        'test_icon_2',
+        'test3'
     );
     hellMenu.render();
 }

@@ -1,12 +1,17 @@
-.hellmenu_line{
+.hellmenu_line,
+.hellmenu_sub_line{
     height:20px;
     cursor:pointer;
 }
 .hellmenu_text,  
-.hellmenu_menuitem_icon{
+.hellmenu_menuitem_icon,
+.hellmenu_sub_menuitem_icon{
     height: 100%;
     float:left;
     display:block;
+}
+.hellmenu_text,  
+.hellmenu_menuitem_icon{
     margin-left:8px;
 }
 .hellmenu_text{
@@ -22,4 +27,11 @@
 }
 .hellmenu_hide{
     display:none;
+}
+.hellmenu_sub_menuitem_icon{
+    width:20px;
+    margin-left:16px;
+}
+.hellmenu_sub_text{
+    font-weight:100;
 }

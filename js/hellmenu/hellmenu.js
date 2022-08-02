@@ -2,7 +2,13 @@
 
 const hellMenuClass = function(main_element_, menus_){
     this.addSection = function(id,title){
-        _setSection(id,title);
+        _addSection(id,title);
+    };
+    this.addSubSection = function(menu,title){
+        _addSubSection(menu,title);
+    };
+    this.addSub = function(id, title, action, icon_class,  section, subs){
+        _addSub(id, title, action, icon_class,  section, subs);
     };
     this.add = function(id, title, action, icon_class,  section, subs){
         _add(id, title, action, icon_class,  section, subs);
@@ -21,20 +27,33 @@ const hellMenuClass = function(main_element_, menus_){
     const _list_menu_points = {};
     const _list_menus = {};
     const _list_sections = {}; 
+    const _list_sub_sections = {}; 
+    const _list_sub_menus = {};
     const _add = function(id, title, action, icon_class,  section, subs){
         _list_menus[id] = {
              id,
              title,
              action,
              icon_class,
-             section,
-             childs:{}
+             section
         };
         if(typeof section !== 'string')
             section = 'main';
-        if(typeof subs !== 'undefined')
-            _list_menus[id].subs;
-        _menuAddToSection(id,section)
+        _list_menus[id].subs = _subCopy(subs);
+        _menuAddToSection(id,section);
+    };
+    const _addSub = function(id, title, action, icon_class,  section, subs){
+        _list_menus[id] = {
+             id,
+             title,
+             action,
+             icon_class,
+             section
+        };
+        if(typeof section !== 'string')
+            section = 'main';
+        _list_menus[id].subs = _subCopy(subs);
+        _menuAddToSubSection(id,section);
     };
     const _addSection = function(id,title){
         if(typeof _list_sections[id] === 'undefined')
@@ -42,10 +61,26 @@ const hellMenuClass = function(main_element_, menus_){
                  menus:[]
             };
         if(typeof title === 'string')
-           _list_sections[id].title = title;
+            _list_sections[id].title = title;
+    };
+    const _addSubSection = function(menu,title){
+        if(typeof _list_sub_sections[menu] === 'undefined')
+            _list_sub_sections[menu] = {
+                 menus:[]
+            };
+        if(typeof title === 'string')
+           _list_sub_sections[menu].title = title;
     };
     const _class = (name)=>{
         return ('hellmenu_'+name);
+    };
+    const _subClass = (name)=>{
+        return ('hellmenu_sub_'+name);
+    };
+    const _subCopy = (sub)=>{
+        if(typeof subs === 'undefined')
+            return [];
+        return subs;
     };
     const _section = function(id){
         let section  = document.createElement('section');
@@ -54,7 +89,7 @@ const hellMenuClass = function(main_element_, menus_){
            " "+
            _class('section_'+id)
         );
-        for(let i of _list_sections[id].menus)
+        for(let i of _list_sections[id].menus){
            section.appendChild(
                 _menuPoint(
                     _list_menus[i].id,
@@ -64,9 +99,33 @@ const hellMenuClass = function(main_element_, menus_){
                     _list_menus[i].subs
                 )
             );
+           if(typeof _list_sub_sections[i] === 'undefined')
+               continue;
+           section.appendChild(
+               _subSection(i)
+           );
+        }
         return section;
-
-    }
+    };
+    const _subSection = function(id){
+        let section  = document.createElement('section');
+        section.className = ( 
+           _subClass('section')+
+           " "+
+           _subClass('section_'+id)
+        );
+        for(let i of _list_sub_sections[id].menus)
+           section.appendChild(
+                _subMenuPoint(
+                    _list_menus[i].id,
+                    _list_menus[i].title,
+                    _list_menus[i].action,
+                    _list_menus[i].icon_class,
+                    _list_menus[i].subs
+                )
+            );
+        return section;
+    };
     const _menuPoint = function(id, title_text, action, icon_class, subs){
         if(typeof icon_class === 'undefined')
             icon_class = '';
@@ -85,7 +144,43 @@ const hellMenuClass = function(main_element_, menus_){
         menu.appendChild(
             title
         );
-        menu.setAttribute('id', id);
+        menu.setAttribute('id', _class(id));
+        icon.addEventListener(
+            'click',
+            action,
+            false
+        );
+        title.addEventListener(
+            'click',
+            action,
+            false
+        );
+        if(Array.isArray(subs))
+            for(let i of subs)
+                menu.appendChild(
+                    _subPoint(i.id, i.icon_class, i.action)
+                );
+        return menu;
+    };
+    const _subMenuPoint = function(id, title_text, action, icon_class, subs){
+        if(typeof icon_class === 'undefined')
+            icon_class = '';
+        const menu = document.createElement('div');
+        const icon = document.createElement('span');
+        const title = document.createElement('a');
+        menu.className = _subClass('line');
+        icon.className  = _subClass('menuitem_icon '+icon_class);
+        title.className = _subClass('text');
+        title.appendChild(
+            document.createTextNode(title_text)
+        );
+        menu.appendChild(
+            icon
+        );
+        menu.appendChild(
+            title
+        );
+        menu.setAttribute('id', _subClass(id));
         icon.addEventListener(
             'click',
             action,
@@ -116,37 +211,50 @@ const hellMenuClass = function(main_element_, menus_){
     }
     const _menuTextChange = function(id, title){
         const el = (
-            document.getElementById(id)
-        ).getElementsByClassName('title')[0];
-        el.innerHtml='';
-        el.appendChild(
-            document.createTextNode(title)
-        );
+            document.getElementById(_class(id))
+        ).getElementsByClassName(_class('text'))[0];
+        el.textContent= title.toString();
     };
     const _menuIconChange = function(id, icon){
         const el = (
-             document.getElementById(id)
-        ).getElementsByClassName('icon')[0];
-        el.innerHtml='';
-        el.className = ('menuitem_icon '+icon)
+             document.getElementById(_class(id))
+        ).getElementsByClassName(_class('menuitem_icon'))[0];
+        el.className = (_class('menuitem_icon')+' '+icon);
     };
     const _menuRemoveFormSection = function(menu){
         if(typeof _list_menus[menu].section !== 'string')
             return ;
         const section = _list_menus[menu].section;
-        const index = _list_sections[
-            section
-        ].menus.indexOf(menu);
-        if(index === -1 )
-            return ;
-        _list_sections[
-            section
-        ].menus.splice(index, 1);
+        let index = 0;
+        if(typeof _list_sections[section] !== 'undefined'){
+            index = _list_sections[
+                section
+            ].menus.indexOf(menu);
+            if(index !== -1 )
+                _list_sections[
+                    section
+               ].menus.splice(index, 1);
+        }
+        if(typeof _list_sub_sections[section] !== 'undefined'){
+            index = _list_sub_sections[
+                section
+            ].menus.indexOf(menu);
+            if(index !== -1 )
+                _list_sub_sections[
+                    section
+               ].menus.splice(index, 1);
+        }
     };
     const _menuAddToSection = function (menu,section){
         _addSection(section);
         _menuRemoveFormSection(menu);
         _list_sections[section].menus.push(menu);
+        _list_menus[menu].section = section;
+    };
+    const _menuAddToSubSection = function (menu,section){
+        _addSubSection(section);
+        _menuRemoveFormSection(menu);
+        _list_sub_sections[section].menus.push(menu);
         _list_menus[menu].section = section;
     };
     const _render = function(){
