@@ -29,7 +29,7 @@ const hellMenuClass = function(main_element_, menus_){
     const _list_sections = {}; 
     const _list_sub_sections = {}; 
     const _list_sub_menus = {};
-    const _add = function(id, title, action, icon_class,  section, subs){
+    const _addMenu = function(id, title, action, icon_class,  section){
         _list_menus[id] = {
              id,
              title,
@@ -37,21 +37,20 @@ const hellMenuClass = function(main_element_, menus_){
              icon_class,
              section
         };
+    };
+    const _add = function(id, title, action, icon_class,  section, subs){
+        if(typeof section !== 'string')
+            section = 'main';
+        _addMenu(id, title, action, icon_class,  section);
         if(typeof section !== 'string')
             section = 'main';
         _list_menus[id].subs = _subCopy(subs);
         _menuAddToSection(id,section);
     };
     const _addSub = function(id, title, action, icon_class,  section, subs){
-        _list_menus[id] = {
-             id,
-             title,
-             action,
-             icon_class,
-             section
-        };
-        if(typeof section !== 'string')
-            section = 'main';
+        if (typeof section === 'undefined')
+            throw Error('Missing parent menu section');
+        _addMenu(id, title, action, icon_class,  section);
         _list_menus[id].subs = _subCopy(subs);
         _menuAddToSubSection(id,section);
     };
