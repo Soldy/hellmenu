@@ -22,6 +22,9 @@ const hellMenuClass = function(main_element_, menus_){
     this.show = function(){
         _menu.className = _class('shell');
     }
+    this.id = function(name){
+        return _id(name);
+    }
     const _e = main_element_;
     const _menu  = document.createElement('div');
     const _list_menu_points = {};
