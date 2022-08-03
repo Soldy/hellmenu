@@ -87,13 +87,14 @@ const hellMenuClass = function(main_element_, menus_){
             return [];
         return subs;
     };
-    const _section = function(id){
+    const _sectionElement = function(id, class_){
         let section  = document.createElement('section');
-        section.className = ( 
-           _class('section')+
-           " "+
-           _class('section_'+id)
-        );
+        section.className = class_;
+        section.setAttribute('id', _id(id));
+        return section;
+    };
+    const _section = function(id){
+        let section = _sectionElement(id, _class('section'));
         for(let i of _list_sections[id].menus){
            section.appendChild(
                 _menuPoint(
@@ -113,12 +114,7 @@ const hellMenuClass = function(main_element_, menus_){
         return section;
     };
     const _subSection = function(id){
-        let section  = document.createElement('section');
-        section.className = ( 
-           _subClass('section')+
-           " "+
-           _subClass('section_'+id)
-        );
+        let section = _sectionElement(id, _subClass('section'));
         for(let i of _list_sub_sections[id].menus)
            section.appendChild(
                 _subMenuPoint(
