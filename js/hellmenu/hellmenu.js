@@ -201,10 +201,9 @@ const hellMenuClass = function(main_element_){
 
     };
     const _menuTextChange = function(id, title){
-        const el = (
-            document.getElementById(_id(id))
-        ).getElementsByTagName('a')[0];
-        el.textContent= title.toString();
+        document.getElementById(_id(id))
+            .getElementsByTagName('a')[0]
+            .textContent= title.toString();
     };
     const _menuIconChange = function(id, icon){
         const el = (
