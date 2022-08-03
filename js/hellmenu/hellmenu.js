@@ -45,8 +45,6 @@ const hellMenuClass = function(main_element_, menus_){
         if(typeof section !== 'string')
             section = 'main';
         _addMenu(id, title, action, icon_class,  section);
-        if(typeof section !== 'string')
-            section = 'main';
         _list_menus[id].subs = _subCopy(subs);
         _menuAddToSection(id,section);
     };
