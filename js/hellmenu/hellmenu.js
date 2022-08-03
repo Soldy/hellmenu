@@ -70,6 +70,9 @@ const hellMenuClass = function(main_element_, menus_){
         if(typeof title === 'string')
            _list_sub_sections[menu].title = title;
     };
+    const _id = (name)=>{
+        return ('hellmenu_id_'+name);
+    };
     const _class = (name)=>{
         return ('hellmenu_'+name);
     };
@@ -125,15 +128,13 @@ const hellMenuClass = function(main_element_, menus_){
             );
         return section;
     };
-    const _menuPoint = function(id, title_text, action, icon_class, subs){
-        if(typeof icon_class === 'undefined')
-            icon_class = '';
+    const _menuElements = function(id, menu_class, icon_class, text_class, title_text, action, subs){
         const menu = document.createElement('div');
         const icon = document.createElement('span');
         const title = document.createElement('a');
-        menu.className = _class('line');
-        icon.className  = _class('menuitem_icon '+icon_class);
-        title.className = _class('text');
+        menu.className = menu_class
+        icon.className  = icon_class;
+        title.className = text_class;
         title.appendChild(
             document.createTextNode(title_text)
         );
@@ -143,7 +144,7 @@ const hellMenuClass = function(main_element_, menus_){
         menu.appendChild(
             title
         );
-        menu.setAttribute('id', _class(id));
+        menu.setAttribute('id', _id(id));
         icon.addEventListener(
             'click',
             action,
@@ -160,42 +161,32 @@ const hellMenuClass = function(main_element_, menus_){
                     _subPoint(i.id, i.icon_class, i.action)
                 );
         return menu;
+    }
+    const _menuPoint = function(id, title_text, action, icon_class, subs){
+        if(typeof icon_class === 'undefined')
+            icon_class = '';
+        return _menuElements(
+            id,
+            _class('line'),
+            _class('menuitem_icon '+icon_class),
+            _class('text'),
+            title_text,
+            action,
+            subs
+        );
     };
     const _subMenuPoint = function(id, title_text, action, icon_class, subs){
         if(typeof icon_class === 'undefined')
             icon_class = '';
-        const menu = document.createElement('div');
-        const icon = document.createElement('span');
-        const title = document.createElement('a');
-        menu.className = _subClass('line');
-        icon.className  = _subClass('menuitem_icon '+icon_class);
-        title.className = _subClass('text');
-        title.appendChild(
-            document.createTextNode(title_text)
-        );
-        menu.appendChild(
-            icon
-        );
-        menu.appendChild(
-            title
-        );
-        menu.setAttribute('id', _subClass(id));
-        icon.addEventListener(
-            'click',
+        return _menuElements( 
+            id,
+            _subClass('line'),
+            _subClass('menuitem_icon '+icon_class),
+            _subClass('text'),
+            title_text,
             action,
-            false
+            subs
         );
-        title.addEventListener(
-            'click',
-            action,
-            false
-        );
-        if(Array.isArray(subs))
-            for(let i of subs)
-                menu.appendChild(
-                    _subPoint(i.id, i.icon_class, i.action)
-                );
-        return menu;
     };
     const _subPoint=function(id,icon_class,action){
         const sub = document.createElement('span');
