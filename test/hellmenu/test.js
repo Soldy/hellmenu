@@ -28,5 +28,7 @@ window.onload=function(){
         'test_icon_2',
         'test3'
     );
-    hellMenu.render();
+    document.getElementsByTagName('body')[0].appendChild(
+        hellMenu.render()
+    );
 }

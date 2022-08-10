@@ -1,6 +1,6 @@
 'use strict';
 
-const hellMenuClass = function(main_element_){
+const hellMenuClass = function(){
     this.addSection = function(id,title){
         _addSection(id,title);
     };
@@ -14,7 +14,7 @@ const hellMenuClass = function(main_element_){
         _add(id, title, action, icon_class,  section, subs);
     };
     this.render = function(){
-        _render();
+        return _render();
     };
     this.hide = function(){
         _menu.className = _class('hide');
@@ -31,7 +31,6 @@ const hellMenuClass = function(main_element_){
     this.setIcon = function(id, icon){
         return _menuIconChange(id, icon); 
     };
-    const _e = main_element_;
     const _menu  = document.createElement('div');
     const _list_menus = {};
     const _list_sections = {}; 
@@ -255,9 +254,9 @@ const hellMenuClass = function(main_element_){
             _menu.appendChild(
                 _section(i)
             );
+        return _menu;
     };
     // constructor
-    _e.appendChild(_menu);
 };
 
 
