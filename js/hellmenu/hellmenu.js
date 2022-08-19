@@ -31,7 +31,8 @@ const hellMenuClass = function(){
     this.setIcon = function(id, icon){
         return _menuIconChange(id, icon); 
     };
-    const _menu  = document.createElement('div');
+    const _create = (tag)=>document.createElement(tag);
+    const _menu  = _create('div');
     const _list_menus = {};
     const _list_sections = {}; 
     const _list_sub_sections = {}; 
@@ -89,7 +90,7 @@ const hellMenuClass = function(){
         return sub;
     };
     const _sectionElement = function(id, class_){
-        let section  = document.createElement('section');
+        let section  = _create('section');
         section.className = class_;
         section.setAttribute('id', _id(id));
         return section;
@@ -129,9 +130,9 @@ const hellMenuClass = function(){
         return section;
     };
     const _menuElements = function(id, menu_class, icon_class, text_class, title_text, action, subs){
-        const menu = document.createElement('div');
-        const icon = document.createElement('span');
-        const title = document.createElement('a');
+        const menu  = _create('div');
+        const icon  = _create('span');
+        const title = _create('a');
         menu.className = menu_class;
         icon.className  = icon_class;
         title.className = text_class;
@@ -189,7 +190,7 @@ const hellMenuClass = function(){
         );
     };
     const _subPoint=function(id,icon_class,action){
-        const sub = document.createElement('span');
+        const sub = _create('span');
         sub.setAttribute('id', id);
         sub.addEventListener(
             'click',
