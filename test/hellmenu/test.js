@@ -1,5 +1,5 @@
 window.onload=function(){
-    window.hellMenu = new hellMenuClass(document.getElementsByTagName('body')[0]);
+    window.hellMenu = new hellMenuClass();
     hellMenu.add(
         'test1',
         'Test menu 1',
