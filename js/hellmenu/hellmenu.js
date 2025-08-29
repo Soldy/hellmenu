@@ -1,14 +1,53 @@
 'use strict';
 
 const hellMenuClass = function(){
-    this.addSection = function(id,title){
-        _addSection(id,title);
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @public
+    **/
+    this.addSection = function(id_, title_){
+        _addSection(id_, title_);
     };
-    this.addSubSection = function(menu,title){
-        _addSubSection(menu,title);
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @public
+    **/
+    this.addSubSection = function(menu_, title_){
+        _addSubSection(menu_, title_);
     };
-    this.addSub = function(id, title, action, icon_class,  section, subs){
-        _addSub(id, title, action, icon_class,  section, subs);
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {string}
+     * @param {DOMElement|Array.<DOMElement>}
+     * @public
+    **/
+    this.addSub = function(
+      id_,
+      title_,
+      action_,
+      icon_class_,
+      section_,
+      subs_
+    ){
+        _addSub(
+          id_,
+          title_,
+          action_,
+          icon_class_,
+          section_,
+          subs_
+        );
     };
     this.add = function(id, title, action, icon_class,  section, subs){
         _add(id, title, action, icon_class,  section, subs);
@@ -32,17 +71,58 @@ const hellMenuClass = function(){
         return _menuIconChange(id, icon); 
     };
     const _create = (tag)=>document.createElement(tag);
-    const _menu  = _create('div');
+
+    /**
+     *
+     * @private
+     * @type {Object<string, DOMElement>}
+    **/
     const _list_menus = {};
+
+    /**
+     *
+     * @private
+     * @type {Object<string, DOMElement>}
+    **/
     const _list_sections = {}; 
+
+    /**
+     *
+     * @private
+     * @type {Object<string, DOMElement>}
+    **/
     const _list_sub_sections = {}; 
-    const _addMenu = function(id, title, action, icon_class,  section){
-        _list_menus[id] = {
-            id,
-            title,
-            action,
-            icon_class,
-            section
+
+    /**
+     *
+     * @private
+     * @type {DOMElement}
+    **/
+    const _menu  = _create('div');
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {string}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _addMenu = function(
+      id_,
+      title_,
+      action_,
+      icon_class_,
+      section_
+    ){
+        _list_menus[id_toString()] = {
+            id_.toString(),
+            title_.toString(),
+            action_,
+            icon_class_.toString(),
+            section_
         };
     };
     const _add = function(id, title, action, icon_class,  section, subs){
@@ -75,14 +155,33 @@ const hellMenuClass = function(){
         if(typeof title === 'string')
             _list_sub_sections[menu].title = title;
     };
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
     const _id = (name)=>{
         return ('hellmenu_id_'+name);
     };
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _upper = (in_)=>{
+      return (
+        in_[0].toUpperCase() + in_.slice(1)
+      );
+    };
     const _class = (name)=>{
-        return ('hellmenu_'+name);
+        return ('hellmenu'+_upper(name));
     };
     const _subClass = (name)=>{
-        return ('hellmenu_sub_'+name);
+        return ('hellmenuSub'+_upper(name));
     };
     const _subCopy = (sub)=>{
         if(typeof sub === 'undefined')
@@ -129,15 +228,36 @@ const hellMenuClass = function(){
             );
         return section;
     };
-    const _menuElements = function(id, menu_class, icon_class, text_class, title_text, action, subs){
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {string}
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {DOMElement|Array.<DOMElement>}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _menuElements = function(
+      id_,
+      menu_class_,
+      icon_class_,
+      text_class_,
+      title_text_,
+      action_,
+      subs_
+    ){
         const menu  = _create('div');
         const icon  = _create('span');
         const title = _create('a');
-        menu.className = menu_class;
-        icon.className  = icon_class;
-        title.className = text_class;
+        menu.className = menu_class_;
+        icon.className  = icon_class_;
+        title.className = text_class_;
         title.appendChild(
-            document.createTextNode(title_text)
+            document.createTextNode(title_text_)
         );
         menu.appendChild(
             icon
@@ -145,73 +265,141 @@ const hellMenuClass = function(){
         menu.appendChild(
             title
         );
-        menu.setAttribute('id', _id(id));
+        menu.setAttribute('id', _id(id_));
         icon.addEventListener(
             'click',
-            action,
+            action_,
             false
         );
         title.addEventListener(
             'click',
-            action,
+            action_,
             false
         );
-        if(Array.isArray(subs))
-            for(let i of subs)
+        if(Array.isArray(subs_))
+            for(let i of subs_)
                 menu.appendChild(
                     _subPoint(i.id, i.icon_class, i.action)
                 );
-        return menu;
+        return menu
     };
-    const _menuPoint = function(id, title_text, action, icon_class, subs){
-        if(typeof icon_class === 'undefined')
-            icon_class = '';
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {DOMElement|Array.<DOMElement>}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _menuPoint = function(
+      id_,
+      title_text_,
+      action_,
+      icon_class_,
+      subs_
+    ){
+        if(typeof icon_class_ === 'undefined')
+            icon_class_ = '';
         return _menuElements(
-            id,
+            id_,
             _class('line'),
-            _class('menuitem_icon '+icon_class),
+            _class('menuitemIcon '+icon_class_),
             _class('text'),
-            title_text,
-            action,
-            subs
+            title_text_,
+            action_,
+            subs_
         );
     };
-    const _subMenuPoint = function(id, title_text, action, icon_class, subs){
-        if(typeof icon_class === 'undefined')
-            icon_class = '';
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {DOMElement|Array.<DOMElement>}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _subMenuPoint = function(
+      id_,
+      title_text_,
+      action_,
+      icon_class_,
+      subs_
+    ){
+        if(typeof icon_class_ === 'undefined')
+            icon_class_ = '';
         return _menuElements( 
-            id,
+            id_,
             _subClass('line'),
-            _subClass('menuitem_icon '+icon_class),
+            _subClass('menuitemIcon '+icon_class_),
             _subClass('text'),
-            title_text,
-            action,
-            subs
+            title_text_,
+            action_,
+            subs_
         );
     };
-    const _subPoint=function(id,icon_class,action){
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _subPoint=function(
+      id_,
+      icon_class_,
+      action_
+    ){
         const sub = _create('span');
-        sub.setAttribute('id', id);
+        sub.setAttribute('id', id_);
         sub.addEventListener(
             'click',
-            action,
+            action_,
             false
         );
         return sub;
 
     };
-    const _menuTextChange = function(id, title){
-        document.getElementById(_id(id))
+
+    /**
+     * @param{string}
+     * @param{string}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _menuTextChange = function(
+      id_,
+      title_
+    ){
+        document.getElementById(_id(id_))
             .getElementsByTagName('a')[0]
-            .textContent= title.toString();
+            .textContent= title_.toString();
     };
-    const _menuIconChange = function(id, icon){
+
+    /**
+     *
+     * @param{string}
+     * @param{string}
+     * @private
+     * @return {DOMElement}
+    **/
+    const _menuIconChange = function(
+      id_,
+      icon_
+    ){
         const el = (
-            document.getElementById(_id(id))
+            document.getElementById(_id(id_))
         ).getElementsByTagName('span')[0];
         let className = el.className;
         className = (className.split(' '))[0];
-        el.className = (className+' '+icon);
+        el.className = (className+' '+icon_);
     };
     const _menuRemoveFormSection = function(menu){
         if(typeof _list_menus[menu].section !== 'string')
@@ -243,12 +431,22 @@ const hellMenuClass = function(){
         _list_sections[section].menus.push(menu);
         _list_menus[menu].section = section;
     };
-    const _menuAddToSubSection = function (menu,section){
-        _addSubSection(section);
-        _menuRemoveFormSection(menu);
-        _list_sub_sections[section].menus.push(menu);
+
+    const _menuAddToSubSection = function (
+      menu_,
+      section_
+    ){
+        _addSubSection(section_);
+        _menuRemoveFormSection(menu_);
+        _list_sub_sections[section].menus.push(menu_);
         _list_menus[menu].section = section;
     };
+
+    /**
+     *
+     * @private
+     * @return {DOMElement}
+    **/
     const _render = function(){
         _menu.innerHTML = '';
         for(let i in _list_sections)

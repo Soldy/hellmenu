@@ -1,37 +1,66 @@
-.hellmenu_line,
-.hellmenu_sub_line{
+:root{
+    --background: #333;
+    --active: #444;
+    --inactive: #555;
+    --hover: #666;
+    --border-color: #888;
+    --active-border: #3f3fea;
+    --text: #999;
+    --inactive-text: #ddd;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #fff;
+    --active: #eee;
+    --inactive: #ccc;
+    --hover: #ddd;
+    --border-color: #888;
+    --active-border: #3f3fea;
+    --text: #000;
+    --inactive-text: #000;
+  }
+}
+
+.hellmenuLine,
+.hellmenuSubLine{
     height:20px;
     cursor:pointer;
+    color: var(--text);
 }
-.hellmenu_text,  
-.hellmenu_menuitem_icon,
-.hellmenu_sub_menuitem_icon{
+.hellmenuLine:hover,
+.hellmenuSubLine:hover{
+     background: var(--hover);
+}
+.hellmenuText,
+.hellmenuMenuitemIcon,
+.hellmenuSubMenuitemIcon{
     height: 100%;
     float:left;
     display:block;
 }
-.hellmenu_text,  
-.hellmenu_menuitem_icon{
+.hellmenuText,
+.hellmenuMenuitemIcon{
     margin-left:8px;
 }
-.hellmenu_text{
+.hellmenuText{
     font-weight:bold;
 }
-.hellmenu_menuitem_icon{
+.hellmenuMenuitemIcon{
     width:10px;
 }
-.hellmenu_section{
+.hellmenuSection{
     border-top:solid #ccc 1px;
     margin-top:4px;
     padding-top:4px;
 }
-.hellmenu_hide{
+.hellmenuHide{
     display:none;
 }
-.hellmenu_sub_menuitem_icon{
+.hellmenuSubMenuitemIcon{
     width:20px;
     margin-left:16px;
 }
-.hellmenu_sub_text{
+.hellmenuSubText{
     font-weight:100;
 }
