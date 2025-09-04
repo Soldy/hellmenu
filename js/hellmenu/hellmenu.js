@@ -1,3 +1,20 @@
+/**
+ *
+ * @author 501dy
+ * @version 0.0.0a
+ * @copyright GPLv3
+ * @file Menu Plugin for Hell
+ * @desc This module provides a customizable 
+ *  menu for the Hell pages. The Hell pages can generate their
+ *  own menus using the AXPN format with the hellmenu. Also, 
+ *  it can be used as a standalone class.
+ *
+ * @todo This needs to be redesigned.
+ *  Currently, it relies on IDs, but we can store
+ *  the element directly to avoid repeatedly calling
+ *  getElementById. This approach saves both time and resources.
+**/
+
 'use strict';
 
 const hellMenuClass = function(){
@@ -49,28 +66,91 @@ const hellMenuClass = function(){
           subs_
         );
     };
-    this.add = function(id, title, action, icon_class,  section, subs){
-        _add(id, title, action, icon_class,  section, subs);
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {string}
+     * @param {DOMElement|Array.<DOMElement>}
+     * @public
+    **/
+    this.add = function(
+      id_,
+      title_,
+      action_,
+      icon_class_,
+      section_,
+      subs_
+    ){
+        _add(
+          id_,
+          title_,
+          action_,
+          icon_class_,
+          section_,
+          subs_
+        );
     };
+
+    /**
+     *
+     * @public
+    **/
     this.render = function(){
         return _render();
     };
+
+    /**
+     *
+     * @public
+    **/
     this.hide = function(){
         _menu.className = _class('hide');
     };
+
+    /**
+     *
+     * @public
+    **/
     this.show = function(){
         _menu.className = _class('shell');
     };
+
+    /**
+     *
+     * @public
+    **/
     this.id = function(name){
         return _id(name);
     };
+
+    /**
+     *
+     * @public
+    **/
     this.setTitle = function(id, title){
         return _menuTextChange(id, title); 
     };
+
+    /**
+     *
+     * @public
+    **/
     this.setIcon = function(id, icon){
         return _menuIconChange(id, icon); 
     };
     const _create = (tag)=>document.createElement(tag);
+
+    /**
+     *
+     * @private
+     * @type {number}
+    **/
+    const _render_section_serial = 0;
+
 
     /**
      *
@@ -108,7 +188,6 @@ const hellMenuClass = function(){
      * @param {string}
      * @param {string}
      * @private
-     * @return {DOMElement}
     **/
     const _addMenu = function(
       id_,
@@ -117,43 +196,101 @@ const hellMenuClass = function(){
       icon_class_,
       section_
     ){
-        _list_menus[id_toString()] = {
-            id_.toString(),
-            title_.toString(),
-            action_,
-            icon_class_.toString(),
-            section_
+        _list_menus[id_.toString()] = {
+            'id':id_.toString(),
+            'title':title_.toString(),
+            'action':action_,
+            'icon_class':icon_class_.toString(),
+            'section':section_
         };
     };
-    const _add = function(id, title, action, icon_class,  section, subs){
-        if(typeof section !== 'string')
-            section = 'main';
-        _addMenu(id, title, action, icon_class,  section);
-        _list_menus[id].subs = _subCopy(subs);
-        _menuAddToSection(id,section);
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {string}
+     * @private
+    **/
+    const _add = function(
+      id_,
+      title_,
+      action_,
+      icon_class_,
+      section_,
+      subs_
+    ){
+        if(typeof section_ !== 'string')
+            section_ = 'main';
+        _addMenu(
+          id_,
+          title_,
+          action_,
+          icon_class_,
+          section_
+        );
+        _list_menus[id_].subs = _subCopy(subs_);
+        _menuAddToSection(
+          id_,
+          section_
+        );
     };
-    const _addSub = function(id, title, action, icon_class,  section, subs){
-        if (typeof section === 'undefined')
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @param {function}
+     * @param {string}
+     * @param {string}
+     * @param {DOMElement}
+     * @private
+    **/
+    const _addSub = function(
+      id_,
+      title_,
+      action_,
+      icon_class_,
+      section_,
+      subs_
+    ){
+        if (typeof section_ === 'undefined')
             throw Error('Missing parent menu section');
-        _addMenu(id, title, action, icon_class,  section);
-        _list_menus[id].subs = _subCopy(subs);
-        _menuAddToSubSection(id,section);
+        _addMenu(id_, title_, action_, icon_class_,  section_);
+        _list_menus[id_].subs = _subCopy(subs_);
+        _menuAddToSubSection(id_, section_);
+   };
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @private
+    **/
+    const _addSection = function(id_, title_){
+        if(typeof _list_sections[id_] === 'undefined')
+            _list_sections[id_] = {
+                menus:[]
+            };
+        if(typeof title_ === 'string')
+            _list_sections[id_].title = title_;
     };
-    const _addSection = function(id,title){
-        if(typeof _list_sections[id] === 'undefined')
-            _list_sections[id] = {
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @private
+    **/
+    const _addSubSection = function(menu_, title_){
+        if(typeof _list_sub_sections[menu_] === 'undefined')
+            _list_sub_sections[menu_] = {
                 menus:[]
             };
         if(typeof title === 'string')
-            _list_sections[id].title = title;
-    };
-    const _addSubSection = function(menu,title){
-        if(typeof _list_sub_sections[menu] === 'undefined')
-            _list_sub_sections[menu] = {
-                menus:[]
-            };
-        if(typeof title === 'string')
-            _list_sub_sections[menu].title = title;
+            _list_sub_sections[menu_].title = title_;
     };
 
     /**
@@ -162,8 +299,8 @@ const hellMenuClass = function(){
      * @private
      * @return {string}
     **/
-    const _id = (name)=>{
-        return ('hellmenu_id_'+name);
+    const _id = (name_)=>{
+        return ('hellmenu_id_'+name_);
     };
 
     /**
@@ -177,26 +314,62 @@ const hellMenuClass = function(){
         in_[0].toUpperCase() + in_.slice(1)
       );
     };
-    const _class = (name)=>{
-        return ('hellmenu'+_upper(name));
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _class = (name_)=>{
+        return ('hellmenu'+_upper(name_));
     };
-    const _subClass = (name)=>{
-        return ('hellmenuSub'+_upper(name));
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _subClass = (name_)=>{
+        return ('hellmenuSub'+_upper(name_));
     };
-    const _subCopy = (sub)=>{
-        if(typeof sub === 'undefined')
+
+    /**
+     *
+     * @param {Array<string>}
+     * @private
+     * @return {Array<string>}
+    **/
+    const _subCopy = (sub_)=>{
+        if(typeof sub_ === 'undefined')
             return [];
-        return sub;
+        return sub_;
     };
-    const _sectionElement = function(id, class_){
+
+    /**
+     *
+     * @param {string}
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _sectionElement = function(id_, class_){
         let section  = _create('section');
         section.className = class_;
-        section.setAttribute('id', _id(id));
+        section.setAttribute('id', _id(id_));
         return section;
     };
-    const _section = function(id){
-        let section = _sectionElement(id, _class('section'));
-        for(let i of _list_sections[id].menus){
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _section = function(id_){
+        let section = _sectionElement(id_, _class('section'));
+        for(let i of _list_sections[id_].menus){
             section.appendChild(
                 _menuPoint(
                     _list_menus[i].id,
@@ -214,9 +387,16 @@ const hellMenuClass = function(){
         }
         return section;
     };
-    const _subSection = function(id){
-        let section = _sectionElement(id, _subClass('section'));
-        for(let i of _list_sub_sections[id].menus)
+
+    /**
+     *
+     * @param {string}
+     * @private
+     * @return {string}
+    **/
+    const _subSection = function(id_){
+        let section = _sectionElement(id_, _subClass('section'));
+        for(let i of _list_sub_sections[id_].menus)
             section.appendChild(
                 _subMenuPoint(
                     _list_menus[i].id,
@@ -401,6 +581,14 @@ const hellMenuClass = function(){
         className = (className.split(' '))[0];
         el.className = (className+' '+icon_);
     };
+
+    /**
+     *
+     * @param{string}
+     * @param{string}
+     * @private
+     * @return {DOMElement}
+    **/
     const _menuRemoveFormSection = function(menu){
         if(typeof _list_menus[menu].section !== 'string')
             return ;
@@ -425,21 +613,37 @@ const hellMenuClass = function(){
                 ].menus.splice(index, 1);
         }
     };
-    const _menuAddToSection = function (menu,section){
-        _addSection(section);
-        _menuRemoveFormSection(menu);
-        _list_sections[section].menus.push(menu);
-        _list_menus[menu].section = section;
+
+    /**
+     *
+     * @param{string}
+     * @param{string}
+     * @private
+    **/
+    const _menuAddToSection = function (
+      menu_,
+      section_
+    ){
+        _addSection(section_);
+        _menuRemoveFormSection(menu_);
+        _list_sections[section_].menus.push(menu_);
+        _list_menus[menu_].section = section_;
     };
 
+    /**
+     *
+     * @param{string}
+     * @param{string}
+     * @private
+    **/
     const _menuAddToSubSection = function (
       menu_,
       section_
     ){
         _addSubSection(section_);
         _menuRemoveFormSection(menu_);
-        _list_sub_sections[section].menus.push(menu_);
-        _list_menus[menu].section = section;
+        _list_sub_sections[section_].menus.push(menu_);
+        _list_menus[menu_].section = section_;
     };
 
     /**
