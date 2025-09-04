@@ -26,6 +26,7 @@ const hellMenuClass = function(){
      * @public
     **/
     this.addSection = function(id_, title_){
+        _rendered = false;
         _addSection(id_, title_);
     };
 
@@ -36,6 +37,7 @@ const hellMenuClass = function(){
      * @public
     **/
     this.addSubSection = function(menu_, title_){
+        _rendered = false;
         _addSubSection(menu_, title_);
     };
 
@@ -57,6 +59,7 @@ const hellMenuClass = function(){
       section_,
       subs_
     ){
+        _rendered = false;
         _addSub(
           id_,
           title_,
@@ -85,6 +88,7 @@ const hellMenuClass = function(){
       section_,
       subs_
     ){
+        _rendered = false;
         _add(
           id_,
           title_,
@@ -132,6 +136,7 @@ const hellMenuClass = function(){
      * @public
     **/
     this.setTitle = function(id, title){
+        _rendered = false;
         return _menuTextChange(id, title); 
     };
 
@@ -140,8 +145,16 @@ const hellMenuClass = function(){
      * @public
     **/
     this.setIcon = function(id, icon){
+        _rendered = false;
         return _menuIconChange(id, icon); 
     };
+
+    /**
+     *
+     * @param {string}
+     * @public
+     * @return {DOMElement}
+    **/
     const _create = (tag)=>document.createElement(tag);
 
     /**
@@ -151,6 +164,12 @@ const hellMenuClass = function(){
     **/
     let _render_section_serial = 0;
 
+    /**
+     *
+     * @private
+     * @type {number}
+    **/
+    let _rendered = false;
 
     /**
      *
@@ -668,12 +687,15 @@ const hellMenuClass = function(){
      * @return {DOMElement}
     **/
     const _render = function(){
+        if (_rendered === true)
+            return _menu;
         _menu.innerHTML = '';
         _render_section_serial = 0;
         for(let i in _list_sections)
             _menu.appendChild(
                 _section(i)
             );
+        _rendered = true;
         return _menu;
     };
     // constructor
