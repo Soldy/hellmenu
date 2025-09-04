@@ -149,7 +149,7 @@ const hellMenuClass = function(){
      * @private
      * @type {number}
     **/
-    const _render_section_serial = 0;
+    let _render_section_serial = 0;
 
 
     /**
@@ -368,7 +368,23 @@ const hellMenuClass = function(){
      * @return {string}
     **/
     const _section = function(id_){
-        let section = _sectionElement(id_, _class('section'));
+        let section;
+        if (_render_section_serial === 0) {
+            section = _sectionElement(
+              id_,
+              (
+                _class('section')+
+                ' '+
+                _class('sectionFirst')
+              )
+            );
+        } else {
+            section = _sectionElement(
+              id_,
+              _class('section')
+            );
+        }
+        _render_section_serial++;
         for(let i of _list_sections[id_].menus){
             section.appendChild(
                 _menuPoint(
@@ -653,6 +669,7 @@ const hellMenuClass = function(){
     **/
     const _render = function(){
         _menu.innerHTML = '';
+        _render_section_serial = 0;
         for(let i in _list_sections)
             _menu.appendChild(
                 _section(i)
