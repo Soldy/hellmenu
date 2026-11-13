@@ -1,18 +1,15 @@
 /**
  *
  * @author 501dy
- * @version 0.0.0a
+ * @version 0.0.0b
  * @copyright GPLv3
  * @file Menu Plugin for Hell
- * @desc This module provides a customizable 
+ * @desc This module provides a customizable
  *  menu for the Hell pages. The Hell pages can generate their
  *  own menus using the AXPN format with the hellmenu. Also, 
  *  it can be used as a standalone class.
+ *  so we don't return false.
  *
- * @todo This needs to be redesigned.
- *  Currently, it relies on IDs, but we can store
- *  the element directly to avoid repeatedly calling
- *  getElementById. This approach saves both time and resources.
 **/
 
 'use strict';
@@ -159,10 +156,13 @@ const hellMenuClass = function(){
     this.setIcon = function(id_, icon_){
         if (
           (typeof icon_ == 'undefined') ||
-          (typeof id_ == 'undefined') ||
+          (typeof id_ == 'undefined')
+        )
+            throw ('Missing values');
+        if(
           (!_icons.has(id_))
         )
-            return;
+            throw ('Menu point didn\'t created');
         return _menuIconChange(id_, icon_); 
     };
 
@@ -216,7 +216,7 @@ const hellMenuClass = function(){
     /**
      *
      * @private
-     * @type {Object<string, DOMElement>}
+     * @type {Map<string, DOMElement>}
     **/
     const _list_menus = new Map();
 
@@ -225,14 +225,14 @@ const hellMenuClass = function(){
      * @private
      * @type {Object<string, DOMElement>}
     **/
-    const _list_sections = {}; 
+    const _list_sections = new Map(); 
 
     /**
      *
      * @private
      * @type {Object<string, DOMElement>}
     **/
-    const _list_sub_sections = {}; 
+    const _list_sub_sections = new Map(); 
 
     /**
      *
@@ -240,6 +240,20 @@ const hellMenuClass = function(){
      * @type {DOMElement}
     **/
     const _menu  = _create('div');
+
+    /**
+     *
+     * @param {function}
+     * @private
+     * @return {function}
+    **/
+    const _clickAndTrack = function(action_){
+       const action = action_;
+       return function(event_){
+           if (action() !== true)
+               event_.preventDefault();
+       }
+    }
 
     /**
      *
@@ -346,13 +360,16 @@ const hellMenuClass = function(){
      * @param {string}
      * @private
     **/
-    const _addSection = function(id_, title_){
-        if(typeof _list_sections[id_] === 'undefined')
-            _list_sections[id_] = {
-                menus:[]
-            };
-        if(typeof title_ === 'string')
-            _list_sections[id_].title = title_;
+    const _addSection = function(id_, title_ = ''){
+        let map = {
+          'menus':[],
+          'title':''
+        };
+        if (_list_sections.has(id_))
+            map = _list_sections.get(id_);
+        if (title_ !== '')
+            map.title = title_.toString();
+        _list_sections.set(id_, map);
     };
 
     /**
@@ -361,13 +378,16 @@ const hellMenuClass = function(){
      * @param {string}
      * @private
     **/
-    const _addSubSection = function(menu_, title_){
-        if(typeof _list_sub_sections[menu_] === 'undefined')
-            _list_sub_sections[menu_] = {
-                menus:[]
-            };
-        if(typeof title_ === 'string')
-            _list_sub_sections[menu_].title = title_;
+    const _addSubSection = function(menu_, title_ = ''){
+        let map = {
+          'menus':[],
+          'title':''
+        };
+        if (_list_sub_sections.has(menu_))
+            map = _list_sub_sections.get(menu_);
+        if (title_ !== '')
+            map.title = title_.toString();
+        _list_sub_sections.set(menu_, map);
     };
 
     /**
@@ -421,9 +441,12 @@ const hellMenuClass = function(){
      * @return {Array<string>}
     **/
     const _subFix = (sub_)=>{
+        const out = [];
         if(typeof sub_ === 'undefined')
-            return [];
-        return sub_;
+            return out;
+        for (let i of sub_)
+            out.push(i.toString());
+        return out;
     };
 
     /**
@@ -447,9 +470,9 @@ const hellMenuClass = function(){
      * @return {string}
     **/
     const _section = function(id_){
-        let section;
+        let el;
         if (_render_section_serial === 0) {
-            section = _sectionElement(
+            el = _sectionElement(
               id_,
               (
                 _class('section')+
@@ -458,15 +481,16 @@ const hellMenuClass = function(){
               )
             );
         } else {
-            section = _sectionElement(
+            el = _sectionElement(
               id_,
               _class('section')
             );
         }
         _render_section_serial++;
-        for(let i of _list_sections[id_].menus){
+        const section = _list_sections.get(id_);
+        for(let i of section.menus){
             const map = _list_menus.get(i);
-            section.appendChild(
+            el.appendChild(
                 _menuPoint(
                     map.id,
                     map.title,
@@ -476,13 +500,13 @@ const hellMenuClass = function(){
                     map.help
                 )
             );
-            if(typeof _list_sub_sections[i] === 'undefined')
+            if(!_list_sub_sections.has(i))
                 continue;
-            section.appendChild(
+            el.appendChild(
                 _subSection(i)
             );
         }
-        return section;
+        return el;
     };
 
     /**
@@ -492,10 +516,11 @@ const hellMenuClass = function(){
      * @return {string}
     **/
     const _subSection = function(id_){
-        let section = _sectionElement(id_, _subClass('section'));
-        for(let i of _list_sub_sections[id_].menus){
+        const el = _sectionElement(id_, _subClass('section'));
+        const section = _list_sub_sections.get(id_);
+        for(let i of section.menus){
             const map = _list_menus.get(i);
-            section.appendChild(
+            el.appendChild(
                 _subMenuPoint(
                   map.id,
                   map.title,
@@ -506,7 +531,7 @@ const hellMenuClass = function(){
                 )
             );
         }
-        return section;
+        return el;
     };
 
     /**
@@ -562,12 +587,12 @@ const hellMenuClass = function(){
         if (typeof action_ == 'function'){
             icon.addEventListener(
               'click',
-              action_,
+              _clickAndTrack(action_),
               false
             );
             title.addEventListener(
               'click',
-              action_,
+              _clickAndTrack(action_),
               false
             );
         }
@@ -670,7 +695,7 @@ const hellMenuClass = function(){
         sub.setAttribute('id', id_);
         sub.addEventListener(
           'click',
-          action_,
+          _clickAndTrack(action_),
           false
         );
         _icons.set(id_, sub);
@@ -680,6 +705,7 @@ const hellMenuClass = function(){
     };
 
     /**
+     *
      * @param{string}
      * @param{string}
      * @param{string}
@@ -695,12 +721,17 @@ const hellMenuClass = function(){
           (!_titles.has(id_)) ||
           (!_list_menus.has(id_))
         )
-            return ;
+            throw ('Menu point didn\'t created');
         const map = _list_menus.get(id_);
         map.title = title_.toString();
         map.help = help_.toString();
         _list_menus.set(id_, map);
-        (_titles.get(id_)).textContent = title_.toString();
+        const title = _titles.get(id_);
+        title.textContent = title_.toString();
+        title.setAttribute(
+          'title',
+          help_.toString()
+        );
     };
 
     /**
@@ -718,9 +749,11 @@ const hellMenuClass = function(){
             (_icons.get(id_)).classList.remove(
               _icons_class.get(id_)
             );
-        const map = _list_menus.get(id_);
-        map.icon_class = icon_.toString();
-        _list_menus.set(id_, map);
+        if (_list_menus.has(id_)){
+            const map = _list_menus.get(id_);
+            map.icon_class = icon_.toString();
+            _list_menus.set(id_, map);
+        }
         _icons_class.set(id_, icon_);
         (_icons.get(id_)).classList.add(icon_);
     };
@@ -733,27 +766,22 @@ const hellMenuClass = function(){
     **/
     const _menuRemoveFormSection = function(menu_){
         const map = _list_menus.get(menu_);
-        if(typeof map.section !== 'string')
+        if (typeof map.section !== 'string')
             return ;
-        const section = map.section;
         let index = 0;
-        if(typeof _list_sections[section] !== 'undefined'){
-            index = _list_sections[
-                section
-            ].menus.indexOf(menu_);
-            if(index !== -1 )
-                _list_sections[
-                    section
-                ].menus.splice(index, 1);
+        if (_list_sections.has(map.section)){
+            const section = _list_sections.get(map.section);
+            index = section.menus.indexOf(menu_);
+            if (index !== -1 )
+                section.menus.splice(index, 1);
+            _list_sections.set(map.section, section);
         }
-        if(typeof _list_sub_sections[section] !== 'undefined'){
-            index = _list_sub_sections[
-                section
-            ].menus.indexOf(menu_);
-            if(index !== -1 )
-                _list_sub_sections[
-                    section
-                ].menus.splice(index, 1);
+        if (_list_sub_sections.has(map.section)){
+            const section = _list_sub_sections.get(map.section);
+            index = section.menus.indexOf(menu_);
+            if (index !== -1 )
+                section.menus.splice(index, 1);
+            _list_sub_sections.set(map.section, section);
         }
     };
 
@@ -769,7 +797,9 @@ const hellMenuClass = function(){
     ){
         _menuRemoveFormSection(menu_);
         _addSection(section_);
-        _list_sections[section_].menus.push(menu_);
+        const section = _list_sections.get(section_);
+        section.menus.push(menu_);
+        _list_sections.set(section_, section);
         const map = _list_menus.get(menu_);
         map.section = section_;
         _list_menus.set(menu_, map);
@@ -787,7 +817,9 @@ const hellMenuClass = function(){
     ){
         _menuRemoveFormSection(menu_);
         _addSubSection(section_);
-        _list_sub_sections[section_].menus.push(menu_);
+        const section = _list_sub_sections.get(section_);
+        section.menus.push(menu_);
+        _list_sub_sections.set(section_, section);
         const map = _list_menus.get(menu_);
         map.section = section_;
         _list_menus.set(menu_, map);
@@ -803,10 +835,11 @@ const hellMenuClass = function(){
             return _menu;
         _menu.innerHTML = '';
         _render_section_serial = 0;
-        for(let i in _list_sections)
+        _list_sections.forEach((v,k,m)=>{
             _menu.appendChild(
-                _section(i)
+                _section(k)
             );
+        });
         _rendered = true;
         return _menu;
     };
